@@ -20,6 +20,7 @@ myfiles.iterateSync(function (filename, contents) {
     contents = contents.replace(/hello world/gi, 'some other text');
     return new Buffer(contents);
   }
+  // Note: you can also remove a file here by returning false
 });
 myfiles.iterateSync(function (filename, contents) {
   // upload to s3
