@@ -25,4 +25,11 @@ myfiles.iterateSync(function (filename, contents) {
 myfiles.iterateSync(function (filename, contents) {
   // upload to s3
 });
+myfiles.iterate(function(filename, contents) {
+  // Asynchronous iteration
+});
+```
+To convert the resulting collection of files and folder to a zip (Buffer) call `toZipBuffer()`:
+```javascript
+var buf = myfiles.toZipBuffer();
 ```

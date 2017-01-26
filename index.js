@@ -1,6 +1,7 @@
 var path = require('path'),
   fs = require('fs'),
-  pjson = require('./package.json');
+  pjson = require('./package.json'),
+  JSZip = require('jszip');
 
 /**
  * File munger
@@ -73,6 +74,16 @@ munger.prototype.iterateSync = function (cb) {
 };
 
 /**
+ * Iterate all the files (asynchronous)
+ * @param cb
+ */
+munger.prototype.iterate = function (cb) {
+  process.nextTick(function () {
+    this.iterateSync(cb);
+  }.bind(this));
+};
+
+/**
  * Add a file to the list
  * @param filename
  * @param contents
@@ -85,6 +96,25 @@ munger.prototype.addFile = function (filename, contents) {
     filename: filename,
     contents: contents
   });
+};
+
+/**
+ * Convert the files to a zip
+ */
+munger.prototype.toZipBuffer = function (cb) {
+  if (!cb) {
+    throw new Error("File Munge - toZipBuffer needs a callback.");
+  } else {
+    var zip = new JSZip();
+
+    this.iterateSync(function (filename, contents) {
+      zip.file(filename, contents);
+    });
+
+    zip.generateAsync({type: "nodebuffer", compression: "DEFLATE", level: 9}).then(function (buffer) {
+      cb(buffer);
+    });
+  }
 };
 
 // Expose the interface
